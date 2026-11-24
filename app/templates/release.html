@@ -1,0 +1,8 @@
+<div class="panel-head"><h2>放行交接结论</h2><span>{{ stages.release.counts.partial }} 组部分放行 · {{ stages.release.counts.held }} 组整组留后 · 交接 {{ stages.release.counts.handover }} 件</span></div>
+<div class="table-scroll"><table><thead><tr><th>航段</th><th>目的站</th><th>结论</th><th>随本班走</th><th>留后</th><th>留后接收方</th></tr></thead><tbody>
+{% for group in stages.release.groups %}<tr><td>{{ group.leg }}</td><td>{{ group.destination }}</td><td>{{ {'full':'整组随行','partial':'部分放行','held':'整组留后'}[group.conclusion] }}</td><td>{{ group.aboard|length }} 件{% if group.aboard %}（{{ group.aboard|join(', ') }}）{% endif %}</td><td>{{ group.handover }} 件{% for row in group.left %} <span title="{{ reasons.get(row.reason, '') }}">{{ row.tag }}</span>{% endfor %}</td><td>{{ group.receiver.label if group.handover else '—' }}</td></tr>{% endfor %}</tbody></table></div>
+<div class="panel-head"><h2>交接单</h2>{% if manifest and handovers %}<button id="recall" data-run="{{ manifest.id }}">追回本批交接</button>{% endif %}</div>
+{% if handovers %}<div class="table-scroll"><table><thead><tr><th>交接单</th><th>留后件</th><th>行李牌</th><th>接收方</th><th>状态</th></tr></thead><tbody>
+{% for order in handovers %}<tr><td title="{{ order.run }}">{{ order.run[:12] }} · {{ order.leg }}</td><td class="num">{{ order.count }}</td><td>{{ order.tags|join(', ') }}</td><td>{{ order.receiver }}</td><td><span class="{{ 'warn' if order.status == 'recalled' else 'ok' }}">{{ '已追回' if order.status == 'recalled' else '已发出' }}</span></td></tr>{% endfor %}</tbody></table></div>
+{% elif manifest %}<p class="empty">本批无留后件，未生成交接单。</p>
+{% else %}<p class="empty">归档后按批次生成交接单，重跑同批不重复。</p>{% endif %}

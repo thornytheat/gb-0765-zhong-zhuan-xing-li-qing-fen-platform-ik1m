@@ -3,12 +3,13 @@ from .errors import DeskError
 from .input import sample, submission
 from .modules.archive.routes import store
 from .modules.evidence.service import index
+from .modules.release.service import conclude
 from .pipeline import compute
 from .reasons import REASONS
 
 DESK = {
     'scans': '扫描原件', 'legs': '航段候选', 'replay': '扫件回放', 'exceptions': '错载与漏扫',
-    'ledger': '去向对账', 'archive': '批次留档', 'evidence': '联程证据',
+    'ledger': '去向对账', 'release': '放行交接', 'archive': '批次留档', 'evidence': '联程证据',
 }
 bp = Blueprint('desk', __name__)
 
@@ -18,7 +19,10 @@ def snapshot():
     name = request.args.get('sample', 'dirty')
     if run:
         files, result = store().get(run)
-        return files, result['stages'], result['manifest'], name
+        stages = result['stages']
+        if 'release' not in stages:
+            stages['release'] = conclude(stages['exceptions'], stages['legs']['legs'])
+        return files, stages, result['manifest'], name
     files = sample(name)
     return files, compute(files), None, name
 
@@ -48,5 +52,6 @@ def desk(key):
     files, stages, manifest, name = snapshot()
     context = dict(stages=stages, ledger=stages['ledger']['counts'], names=DESK, key=key, reasons=REASONS,
                    selected=name, manifest=manifest, archive=store().list() if key == 'archive' else [],
+                   handovers=store().handovers(manifest['id']) if key == 'release' and manifest else [],
                    report=index(files, dict(stages=stages, manifest=manifest)) if key == 'evidence' and manifest else None)
     return render_template('desk.html', **context)

@@ -18,4 +18,6 @@ def archive(store, files, compute):
     if (result['manifest']['result_sha256'] != manifest['result_sha256'] or
             fingerprint(result['stages']) != manifest['result_sha256']):
         raise DeskError('REPLAY_DRIFT', '复算结果与归档摘要不符', 409)
-    return dict(id=key, reused=reused, manifest=result['manifest'], counts=result['stages']['ledger']['counts'])
+    store.issue(key, result['stages']['release']['orders'])
+    return dict(id=key, reused=reused, manifest=result['manifest'], counts=result['stages']['ledger']['counts'],
+                handovers=len(result['stages']['release']['orders']))

@@ -24,6 +24,21 @@ document.querySelector('#run-form').addEventListener('submit', event => {
   archive(document.querySelector('#archive-button'), '/api/archive', {sample: sample.value});
 });
 document.querySelector('#rerun')?.addEventListener('click', event => archive(event.currentTarget, `/api/archive/${event.currentTarget.dataset.run}/rerun`));
+document.querySelector('#recall')?.addEventListener('click', async event => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  feedback.textContent = '正在追回交接…';
+  try {
+    const response = await fetch(`/api/release/${button.dataset.run}/recall`, {method: 'POST'});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message);
+    feedback.textContent = `已追回 ${data.recalled} 张交接单`;
+    location.reload();
+  } catch (error) {
+    feedback.textContent = error.message || '追回失败，请重试';
+    button.disabled = false;
+  }
+});
 document.querySelector('#bag-filter')?.addEventListener('input', event => {
   for (const row of document.querySelectorAll('#bag-list [data-tag]')) row.hidden = !row.dataset.tag.includes(event.target.value.trim());
 });

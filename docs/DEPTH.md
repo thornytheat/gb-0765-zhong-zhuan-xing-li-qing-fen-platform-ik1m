@@ -13,6 +13,7 @@
 | M5 行李去向对账 | 勾稽计划段与去向件数 | `/` `/api/stage/ledger` | `app/modules/ledger/service.py` | `tests/test_ledger.py` |
 | M6 批次留档复跑 | 保存并复算原件 | `/desk/archive` `POST /api/archive` | `app/modules/archive/service.py` `app/modules/archive/store.py` | `tests/test_archive.py` |
 | M7 联程证据签发 | 验摘要并下载联程证据 | `/desk/evidence` `/api/evidence/<run>/export` | `app/modules/evidence/bundle.py` | `tests/test_evidence.py` |
+| M8 放行交接结论 | 按组放行并追回交接单 | `/desk/release` `/api/release/<run>` | `app/modules/release/service.py` `app/modules/release/routes.py` | `tests/test_release.py` |
 
 ## 陷阱登记
 
@@ -31,6 +32,8 @@
 ## 对账规则
 
 脏样例清单 12 = 3 已装 + 8 待证 + 1 明确未装，错装 2 件另列。扫描原件记录 24 = 17 采信 + 4 隔离 + 1 重报 + 1 重复表头 + 1 空行。
+
+放行按清单计划航段分组：已装件随本班走，待证与明确未装件留后，交接件数 = 待证 + 明确未装，与对账共用同一判定源。留后接收方取同航班接班航段，无接班则为目的站到达中转席。归档时按批次签发交接单，`(批次, 航段)` 唯一，重跑同批不重复；迟到扫件形成新批次后，旧批未更新的交接单可经 `POST /api/release/<run>/recall` 追回，重复追回不再改变状态。
 
 ## 已知范围
 

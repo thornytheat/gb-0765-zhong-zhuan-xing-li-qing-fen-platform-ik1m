@@ -4,6 +4,7 @@ from .modules.legs.service import associate
 from .modules.replay.service import replay
 from .modules.exceptions.service import classify
 from .modules.ledger.service import reconcile
+from .modules.release.service import conclude
 
 
 def compute(files, until=None):
@@ -24,4 +25,7 @@ def compute(files, until=None):
     ledger = reconcile(decisions, legs, scans['counts'])
     if until == 'ledger':
         return ledger
-    return dict(scans=scans, legs=linked, replay=history, exceptions=decisions, ledger=ledger)
+    release = conclude(decisions, list(legs.values()))
+    if until == 'release':
+        return release
+    return dict(scans=scans, legs=linked, replay=history, exceptions=decisions, ledger=ledger, release=release)

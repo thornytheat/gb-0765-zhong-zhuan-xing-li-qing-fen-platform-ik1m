@@ -11,6 +11,7 @@
 1. 默认打开跨日转运样例，核对清单 12 件、已装 3 件、待证 8 件、明确未装 1 件，另见错装 2 件。
 2. 航段候选查 `000103`。扫件回放查 `000101` 的迟到撤下。错载与漏扫可以按行李牌筛选。
 3. 点击归档复算，在批次留档复算本批，在联程证据下载原件、逐阶段行证和散列。
+4. 放行交接页按组给出随本班走与留后件及留后接收方；归档按批次生成交接单，重跑不重复，旧批未更新的安排可追回。
 4. API 支持 `POST /api/archive`，提交 `{"sample":"dirty"}` 或 `{"files":{"scans.csv":"…","legs.csv":"…","manifest.csv":"…"}}`。前五阶段可用 `GET /api/stage/<key>`，键为 `scans`、`legs`、`replay`、`exceptions`、`ledger`。用 `?run=<id>` 查归档，用 `?sample=clean` 查净样例。
 
 字段与边界见 [数据定义](docs/DATA-DICTIONARY.md)，入口和可执行反例见 [深度登记](docs/DEPTH.md)。

@@ -6,6 +6,7 @@ from .errors import DeskError
 from .modules.archive.routes import bp as archive
 from .modules.archive.store import Archive
 from .modules.evidence.routes import bp as evidence
+from .modules.release.routes import bp as release
 from .web import bp as desk
 
 
@@ -15,7 +16,7 @@ def create_app(path=None):
     app.url_map.redirect_defaults = False
     app.config['MAX_CONTENT_LENGTH'] = 2_000_000
     app.extensions['transfer_archive'] = Archive(path or os.getenv('LUGGAGE_DB', 'var/transfer.sqlite3'))
-    for routes in (archive, evidence, desk):
+    for routes in (archive, evidence, release, desk):
         app.register_blueprint(routes)
 
     @app.get('/health')

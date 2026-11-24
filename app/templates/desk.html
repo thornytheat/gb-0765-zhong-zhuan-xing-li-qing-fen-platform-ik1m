@@ -19,5 +19,5 @@
 <template id="tail-source">{% for row in stages.replay.rows|sort(attribute='received') %}<li><time>{{ row.received[11:19] }}</time><span class="{{ 'warn' if row.late else 'neutral' }}">{{ '迟到' if row.late else '记录' }}</span><b>{{ row.tag }}</b><span>{{ row.leg }} · {{ row.action }}</span></li>{% endfor %}</template></aside>
 
 </div></main>
-<footer><span>席位 / TRANSFER</span><span id="feedback" role="status">{{ manifest.version if manifest else 'LEG-LUGGAGE / 1' }}</span><time>{{ manifest.generated_at[:19] if manifest else '离线预览' }}</time></footer>
+<footer><span>席位 / TRANSFER</span><span id="feedback" role="status">{{ manifest.version if manifest else 'LEG-LUGGAGE / 2' }}</span><time>{{ manifest.generated_at[:19] if manifest else '离线预览' }}</time></footer>
 </div></div></body></html>
